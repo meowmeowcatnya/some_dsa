@@ -1,7 +1,7 @@
 struct ArrayList<T> {
     size: usize,
     tail: usize, 
-    data: *mut T
+    data: *mut T,
 }
 
 impl<T: Default + Copy> ArrayList<T> {
@@ -9,12 +9,11 @@ impl<T: Default + Copy> ArrayList<T> {
         return Self {
             size: 10,
             tail: 0,
-            data: unsafe{ std::alloc::alloc(std::alloc::Layout::array::<T>(10).unwrap()).cast()
-        }
+            data: unsafe{ std::alloc::alloc(std::alloc::Layout::array::<T>(10).unwrap()).cast()}
     }
 }
     
-    fn get(self, index: usize) -> T {
+    fn get(&self, index: usize) -> T {
         if index < self.tail {
             unsafe {
                 return *self.data.add(index)
@@ -35,7 +34,7 @@ impl<T: Default + Copy> ArrayList<T> {
         }
     }
 
-    fn length(self) -> usize {
+    fn length(&self) -> usize {
         return self.tail;
     }
 
@@ -62,7 +61,7 @@ impl<T: Default + Copy> ArrayList<T> {
     }
 
     fn pop(&mut self) -> T {
-        let element = unsafe {*self.data.add(self.tail)};
+        let element = unsafe {*self.data.add(self.tail-1)};
         self.tail -= 1;
         if self.tail < self.size / 4 {
             let new_data: *mut T  = unsafe{std::alloc::alloc(std::alloc::Layout::array::<T>(self.size / 2).unwrap()).cast()};
@@ -80,6 +79,17 @@ impl<T: Default + Copy> ArrayList<T> {
 
 
 fn main() {
+    let mut array_list: ArrayList<i32> =ArrayList::new();
+    for i in 1..15 {
+        array_list.push(i);
+    }
+    array_list.set(8, 30);
+    let popped = array_list.pop();
+    println!("popped element is: {popped}");
+    let length = array_list.length();
+    println!("length is {length}");
+    println!("Index 5 is {}", array_list.get(5));
+    
 }
 
 
